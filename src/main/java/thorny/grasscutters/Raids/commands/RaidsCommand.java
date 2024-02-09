@@ -138,17 +138,17 @@ public class RaidsCommand implements CommandHandler {
         @Setter
         public int lvl = 200;
         @Setter
-        public int amount = 1;
+        public float amount = 1;
         @Setter
-        public int hp = -1;
+        public float hp = -1;
         @Setter
-        public int maxHP = -1;
+        public float maxHP = -1;
         @Setter
-        public int tiHP = -1;
+        public float tiHP = -1;
         @Setter
-        public int atk = -1;
+        public float atk = -1;
         @Setter
-        public int def = -1;
+        public float def = -1;
     }
 
     // Taken from SpawnCommand.java

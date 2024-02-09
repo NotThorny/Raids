@@ -79,8 +79,10 @@ public class MobSpawner {
                 entity.setConfigId(entity.getMonsterData().getId());
 
                 // Add to scene
-                scene.addEntity(entity);
-                newMonsters.add(entity);
+                for (int i = 0; i < boss.getParam().amount; i++) {
+                    scene.addEntity(entity);
+                    newMonsters.add(entity);
+                }
             }
         }
         setMonsters(newMonsters);

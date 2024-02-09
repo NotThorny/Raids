@@ -1,0 +1,13 @@
+{
+  "name": "Raids",
+  "description": "Spawn raid bosses",
+  "version": "1.0",
+  "authors": [ "NotThorny" ],
+  "api": 2,
+  
+  "mainClass": "thorny.grasscutters.Raids.Raids",
+  
+  "comments": [
+    "Don't bug test this because it will break"
+  ]
+}

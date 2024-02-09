@@ -171,8 +171,11 @@ public class RaidsCommand implements CommandHandler {
         if (param.tiHP != -1) {
             // Increase hp by provided multiplier
             entity.setFightProperty(
-                    FightProperty.FIGHT_PROP_CUR_HP, param.hp == 0 ? Float.MAX_VALUE
-                            : (entity.getFightProperty(FightProperty.FIGHT_PROP_CUR_HP) * param.hp));
+                    FightProperty.FIGHT_PROP_CUR_HP,
+                    (entity.getFightProperty(FightProperty.FIGHT_PROP_CUR_HP) * param.tiHP));
+            entity.setFightProperty(
+                    FightProperty.FIGHT_PROP_MAX_HP,
+                    (entity.getFightProperty(FightProperty.FIGHT_PROP_MAX_HP) * param.tiHP));
         }
     }
 

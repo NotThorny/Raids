@@ -56,4 +56,8 @@ Built for Grasscutter 1.7.4, should work on similar versions.
 
 ### Issues
 
+Q: Reward flowers aren't spawning when I defeat a boss!
+
+A: Ensure you are using the latest AIO jar for Grasscutter, available at https://github.com/NotThorny/Grasscutter/releases as a standalone jar or a full build.
+
 #### Any suggestions or issues are welcomed in [issues](https://github.com/NotThorny/Raids/issues)

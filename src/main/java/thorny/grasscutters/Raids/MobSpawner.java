@@ -14,6 +14,7 @@ import emu.grasscutter.game.entity.gadget.GadgetWorktop;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.props.FightProperty;
 import emu.grasscutter.game.world.Position;
+import emu.grasscutter.net.proto.VisionTypeOuterClass.VisionType;
 import emu.grasscutter.scripts.data.SceneBossChest;
 import emu.grasscutter.scripts.data.SceneGadget;
 import emu.grasscutter.scripts.data.SceneMonster;
@@ -42,8 +43,9 @@ public class MobSpawner {
 
         // Get current location
         for (Bosses boss : RaidsCommand.config.getBosses()) {
-            if (boss.getArea() == targetPlayer.getAreaId()
-                    || !Collections.disjoint(boss.getGroups(), scene.getPlayerActiveGroups(targetPlayer))) {
+            if (boss.getArea() == targetPlayer.getAreaId()) {
+                    // Currently causes increasing numbers to spawn, have to investigate
+                    // || !Collections.disjoint(boss.getGroups(), scene.getPlayerActiveGroups(targetPlayer))) {
                 // If boss is already active, don't respawn it
                 var acList = activeMonsters.stream().filter((e) -> e.getConfigId() == boss.getId()).toList();
                 if (acList.size() > 0) {
@@ -54,6 +56,7 @@ public class MobSpawner {
                                 return;
                             } else {
                                 activeMonsters.remove(gameEntity);
+                                gameEntity.getScene().removeEntity(gameEntity);
                             }
                         } catch (Exception e) {
                             // Doesn't exist, continue
@@ -131,7 +134,7 @@ public class MobSpawner {
     }
 
     public static void resetBossList() {
-        activeMonsters.forEach(m -> m.getScene().removeEntity(m));
+        activeMonsters.forEach(m -> m.getScene().removeEntity(m, VisionType.VISION_TYPE_REMOVE));
         activeMonsters.clear();
     }
 } // spawnMobEntity

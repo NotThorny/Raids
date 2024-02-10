@@ -5,8 +5,6 @@ import emu.grasscutter.server.event.EventHandler;
 import emu.grasscutter.server.event.HandlerPriority;
 import emu.grasscutter.server.event.entity.EntityDeathEvent;
 import emu.grasscutter.server.event.player.PlayerEnterAreaEvent;
-import emu.grasscutter.server.event.player.PlayerQuitEvent;
-import emu.grasscutter.server.event.player.PlayerTeleportEvent;
 import thorny.grasscutters.Raids.utils.Config;
 import thorny.grasscutters.Raids.utils.ConfigParser;
 
@@ -30,14 +28,6 @@ public final class Raids extends Plugin {
         new EventHandler<>(PlayerEnterAreaEvent.class)
                 .priority(HandlerPriority.NORMAL)
                 .listener(EventListener::PlayerEnterAreaEvent)
-                .register(this);
-        new EventHandler<>(PlayerQuitEvent.class)
-                .priority(HandlerPriority.NORMAL)
-                .listener(EventListener::PlayerQuitEvent)
-                .register(this);
-        new EventHandler<>(PlayerTeleportEvent.class)
-                .priority(HandlerPriority.NORMAL)
-                .listener(EventListener::PlayerTpEvent)
                 .register(this);
         // Register commands.
         this.getHandle().registerCommand(new thorny.grasscutters.Raids.commands.RaidsCommand());

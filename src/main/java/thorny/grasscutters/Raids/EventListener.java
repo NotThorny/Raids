@@ -33,12 +33,4 @@ public final class EventListener {
     public static void PlayerEnterAreaEvent(PlayerEnterAreaEvent event) {
         MobSpawner.spawnMobEntity(event.getPlayer());
     }
-
-    public static void PlayerQuitEvent(PlayerQuitEvent event) {
-        MobSpawner.resetBossList();
-    }
-
-    public static void PlayerTpEvent(PlayerTeleportEvent event) {
-        MobSpawner.resetBossList();
-    }
 }

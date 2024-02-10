@@ -1,7 +1,8 @@
 package thorny.grasscutters.Raids;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,6 @@ import emu.grasscutter.game.entity.gadget.GadgetWorktop;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.props.FightProperty;
 import emu.grasscutter.game.world.Position;
-import emu.grasscutter.net.proto.VisionTypeOuterClass.VisionType;
 import emu.grasscutter.scripts.data.SceneBossChest;
 import emu.grasscutter.scripts.data.SceneGadget;
 import emu.grasscutter.scripts.data.SceneMonster;
@@ -25,11 +25,9 @@ public class MobSpawner {
 
     // Defaults
     static List<EntityMonster> newMonsters = new ArrayList<>();
-    public static List<GameEntity> activeMonsters = new ArrayList<>(); // Current mobs
 
     // Set groupId for new monsters
     public static void setMonsters(List<EntityMonster> monsters) {
-        MobSpawner.activeMonsters.addAll(monsters);
         for (EntityMonster monster : monsters) {
             monster.setGroupId(800815);
         } // for
@@ -40,27 +38,20 @@ public class MobSpawner {
         Bosses bossToSpawn = new Bosses();
         newMonsters.clear();
         var scene = targetPlayer.getScene();
+        HashSet<Integer> activeGroups = new HashSet<Integer>(scene.getPlayerActiveGroups(targetPlayer));
 
         // Get current location
         for (Bosses boss : RaidsCommand.config.getBosses()) {
-            if (boss.getArea() == targetPlayer.getAreaId()) {
-                    // Currently causes increasing numbers to spawn, have to investigate
-                    // || !Collections.disjoint(boss.getGroups(), scene.getPlayerActiveGroups(targetPlayer))) {
+            List<Integer> bossGroups = new LinkedList<>(boss.getGroups());
+            bossGroups.retainAll(activeGroups);
+            if (boss.getArea() == targetPlayer.getAreaId() || !bossGroups.isEmpty()) {
                 // If boss is already active, don't respawn it
-                var acList = activeMonsters.stream().filter((e) -> e.getConfigId() == boss.getId()).toList();
+                var acList = scene.getEntities().values().stream().filter((e) -> e.getConfigId() == boss.getId()).toList();
                 if (acList.size() > 0) {
                     // Check if boss still exists
                     for (GameEntity gameEntity : acList) {
-                        try {
-                            if (gameEntity.isAlive()) {
-                                return;
-                            } else {
-                                activeMonsters.remove(gameEntity);
-                                gameEntity.getScene().removeEntity(gameEntity);
-                            }
-                        } catch (Exception e) {
-                            // Doesn't exist, continue
-                            activeMonsters.remove(gameEntity);
+                        if (gameEntity.isAlive()) {
+                            return;
                         }
                     }
                 }
@@ -90,9 +81,6 @@ public class MobSpawner {
     } // if
 
     public static void raidReward(GameEntity monster) {
-        // Remove boss from active list
-        removeBossFromList(monster);
-
         // Create gadget
         EntityGadget gadget = new EntityGadget(monster.getScene(), 70360056, monster.getPosition(),
                 monster.getRotation());
@@ -129,14 +117,5 @@ public class MobSpawner {
 
         // Spawn reward
         monster.getScene().addEntity(chest);
-    }
-
-    private static void removeBossFromList(GameEntity monster) {
-        activeMonsters.removeIf(m -> m.getConfigId() == monster.getConfigId());
-    }
-
-    public static void resetBossList() {
-        activeMonsters.forEach(m -> m.getScene().removeEntity(m, VisionType.VISION_TYPE_REMOVE));
-        activeMonsters.clear();
     }
 } // spawnMobEntity

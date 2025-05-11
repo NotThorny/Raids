@@ -4,8 +4,10 @@ import java.util.Set;
 
 import com.google.gson.annotations.SerializedName;
 
+import lombok.Data;
 import thorny.grasscutters.Raids.commands.RaidsCommand.SpawnParameters;
 
+@Data
 public class Bosses {
 
     @SerializedName("area")
@@ -25,52 +27,4 @@ public class Bosses {
 
     @SerializedName("groups")
     Set<Integer> groups;
-
-    public Set<Integer> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(Set<Integer> groups) {
-        this.groups = groups;
-    }
-
-    public String getRot() {
-        return rot;
-    }
-
-    public void setRot(String rot) {
-        this.rot = rot;
-    }
-
-    public String getPos() {
-        return pos;
-    }
-
-    public void setPos(String pos) {
-        this.pos = pos;
-    }
-
-    public SpawnParameters getParam() {
-        return param;
-    }
-
-    public void setParam(SpawnParameters param) {
-        this.param = param;
-    }
-
-    public int getArea() {
-        return area;
-    }
-
-    public void setArea(int area) {
-        this.area = area;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 }

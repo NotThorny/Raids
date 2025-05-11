@@ -1,6 +1,5 @@
 package thorny.grasscutters.Raids;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,10 +21,6 @@ import thorny.grasscutters.Raids.commands.RaidsCommand;
 import thorny.grasscutters.Raids.utils.Bosses;
 
 public class MobSpawner {
-
-    // Defaults
-    static List<EntityMonster> newMonsters = new ArrayList<>();
-
     // Set groupId for new monsters
     public static void setMonsters(List<EntityMonster> monsters) {
         for (EntityMonster monster : monsters) {
@@ -35,49 +30,49 @@ public class MobSpawner {
 
     // Spawn the monsters
     public static void spawnMobEntity(Player targetPlayer) {
-        Bosses bossToSpawn = new Bosses();
-        newMonsters.clear();
+        //newMonsters.clear();
         var scene = targetPlayer.getScene();
         HashSet<Integer> activeGroups = new HashSet<Integer>(scene.getPlayerActiveGroups(targetPlayer));
+        var acList = scene.getEntities().values().stream().filter((e) -> e.getGroupId() == 800815).toList();
 
         // Get current location
         for (Bosses boss : RaidsCommand.config.getBosses()) {
+            boolean alreadySpawned = false;
             List<Integer> bossGroups = new LinkedList<>(boss.getGroups());
             bossGroups.retainAll(activeGroups);
-            if (boss.getArea() == targetPlayer.getAreaId() || !bossGroups.isEmpty()) {
-                // If boss is already active, don't respawn it
-                var acList = scene.getEntities().values().stream().filter((e) -> e.getConfigId() == boss.getId()).toList();
-                if (acList.size() > 0) {
-                    // Check if boss still exists
-                    for (GameEntity gameEntity : acList) {
-                        if (gameEntity.isAlive()) {
-                            return;
-                        }
+            if (boss.getArea() == targetPlayer.getAreaId() || !bossGroups.isEmpty() && acList.size() > 0) {
+                // Check if boss still exists
+                for (GameEntity gameEntity : acList) {
+                    if (gameEntity.getConfigId() == boss.getId() && gameEntity.isAlive()) {
+                        alreadySpawned = true;
+                        break;
                     }
                 }
-                bossToSpawn = boss;
+
+                if (alreadySpawned) {
+                    continue;
+                }
+
                 Position pos = new Position(boss.getPos());
                 Position rot = new Position(boss.getRot());
 
                 MonsterData monsterData = GameData.getMonsterDataMap().get(boss.getId());
-                EntityMonster entity = new EntityMonster(scene, monsterData, pos, rot,
-                        bossToSpawn.getParam().lvl);
-                RaidsCommand.applyCommonParameters(entity, bossToSpawn.getParam());
-                entity.setGroupId(800815);
-                entity.setAiId(27001005);
-
-                // Set config id
-                entity.setConfigId(entity.getMonsterData().getId());
 
                 // Add to scene
                 for (int i = 0; i < boss.getParam().amount; i++) {
+                    EntityMonster entity = new EntityMonster(scene, monsterData, pos, rot,
+                        boss.getParam().lvl);
+                    RaidsCommand.applyCommonParameters(entity, boss.getParam());
+                    entity.setGroupId(800815);
+                    entity.setAiId(27001005);
+
+                    // Set config id
+                    entity.setConfigId(entity.getMonsterData().getId());
                     scene.addEntity(entity);
-                    newMonsters.add(entity);
+
                 }
             }
         }
-        setMonsters(newMonsters);
-        newMonsters.clear();
     } // if
 
     public static void raidReward(GameEntity monster) {

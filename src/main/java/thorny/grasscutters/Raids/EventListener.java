@@ -19,7 +19,7 @@ import thorny.grasscutters.Raids.commands.RaidsCommand;
  */
 public final class EventListener {
     public static void EntityDeathEvent(EntityDeathEvent event) {
-        if (RaidsCommand.getMobSceneGroup() == event.getEntity().getGroupId())
+        if (RaidsCommand.getMobSceneGroup() == event.getEntity().getGroupId()) {
             try {
                 GameEntity monster = event.getEntity();
                 var entType = event.getEntity().getEntityType();
@@ -30,6 +30,7 @@ public final class EventListener {
                 throw new RuntimeException(e);
             }
         }
+    }
     public static void PlayerEnterAreaEvent(PlayerEnterAreaEvent event) {
         MobSpawner.spawnMobEntity(event.getPlayer());
     }

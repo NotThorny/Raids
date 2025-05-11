@@ -9,12 +9,13 @@ import static emu.grasscutter.command.CommandHelpers.*;
 import emu.grasscutter.game.entity.EntityMonster;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.props.FightProperty;
+import emu.grasscutter.game.world.Scene;
 import emu.grasscutter.scripts.data.SceneGroup;
 
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
-import lombok.Setter;
+import lombok.Data;
 import thorny.grasscutters.Raids.MobSpawner;
 import thorny.grasscutters.Raids.Raids;
 import thorny.grasscutters.Raids.utils.Bosses;
@@ -87,14 +88,7 @@ public class RaidsCommand implements CommandHandler {
                     for (Bosses boss : config.getBosses()) {
                         if (boss.getId() == bossId) {
 
-                            // Save stats
-                            boss.setParam(param);
-                            boss.setArea(targetPlayer.getAreaId());
-                            boss.setGroups(scene.getPlayerActiveGroups(targetPlayer));
-                            var pos = targetPlayer.getPosition().toString();
-                            var rot = targetPlayer.getRotation().toString();
-                            boss.setPos(pos.substring(1, pos.length() - 1));
-                            boss.setRot(rot.substring(1, rot.length() - 1));
+                            updateBossParams(targetPlayer, scene, boss);
 
                             if (updateConfig()) {
                                 CommandHandler.sendMessage(targetPlayer, bossId + " updated!");
@@ -106,15 +100,7 @@ public class RaidsCommand implements CommandHandler {
 
                 Bosses newBoss = new Bosses();
                 newBoss.setId(bossId);
-                newBoss.setArea(targetPlayer.getAreaId());
-                newBoss.setGroups(scene.getPlayerActiveGroups(targetPlayer));
-                newBoss.setParam(param);
-                var pos = targetPlayer.getPosition().toString();
-                var rot = targetPlayer.getRotation().toString();
-                newBoss.setPos(pos.substring(1, pos.length() - 1));
-                newBoss.setRot(rot.substring(1, rot.length() - 1));
-
-                config.getBosses().add(newBoss);
+                config.getBosses().add(updateBossParams(targetPlayer, scene, newBoss));
 
                 // Update config file
                 if (updateConfig()) {
@@ -128,26 +114,33 @@ public class RaidsCommand implements CommandHandler {
         }
     }
 
+    private Bosses updateBossParams(Player targetPlayer, Scene scene, Bosses boss) {
+        // Save stats
+        boss.setParam(param);
+        boss.setArea(targetPlayer.getAreaId());
+        boss.setGroups(scene.getPlayerActiveGroups(targetPlayer));
+        var pos = targetPlayer.getPosition().toString();
+        var rot = targetPlayer.getRotation().toString();
+        boss.setPos(pos.substring(1, pos.length() - 1));
+        boss.setRot(rot.substring(1, rot.length() - 1));
+
+        return boss;
+    }
+
     // Return for event listener
     public static int getMobSceneGroup() {
         return 800815;
     } // getMobSceneGroup
 
     // Taken from SpawnCommand.java
+    @Data
     public static class SpawnParameters {
-        @Setter
         public int lvl = 200;
-        @Setter
         public float amount = 1;
-        @Setter
         public float hp = -1;
-        @Setter
         public float maxHP = -1;
-        @Setter
         public float tiHP = -1;
-        @Setter
         public float atk = -1;
-        @Setter
         public float def = -1;
     }
 
